@@ -72,6 +72,27 @@
       font-style: italic;
     }
 
+    .training-link {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.6rem 1.4rem;
+      background: transparent;
+      color: #8ab4f8;
+      border: 1px solid #5a7d9a;
+      border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+
+    .training-link:hover {
+      background: rgba(138, 180, 248, 0.08);
+      border-color: #8ab4f8;
+      transform: translateY(-2px);
+    }
+
     .products {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -154,8 +175,8 @@
       border-color: #8ab4f8;
     }
 
-    /* Страница деталей */
-    #detail-view {
+    /* Общие стили для страниц деталей */
+    .detail-page {
       display: none;
       max-width: 800px;
       margin: 2rem auto;
@@ -167,25 +188,36 @@
       transition: opacity 0.4s ease;
     }
 
-    #detail-view.visible {
+    .detail-page.visible {
       display: block;
       opacity: 1;
     }
 
-    #detail-view h2 {
+    .detail-page h2 {
       font-size: 1.8rem;
       color: #d1d9e0;
-      margin-bottom: 1rem;
+      margin-bottom: 1.2rem;
+      text-align: center;
     }
 
-    #detail-view .content-list {
-      margin: 1.2rem 0;
+    .highlight {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #8ab4f8;
+      margin: 1rem 0;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    .content-list {
+      margin: 1.5rem auto;
       padding-left: 1.4rem;
       color: #a0b0c0;
+      max-width: 600px;
     }
 
-    #detail-view .content-list li {
-      margin-bottom: 0.6rem;
+    .content-list li {
+      margin-bottom: 0.7rem;
     }
 
     .back-link {
@@ -239,6 +271,7 @@
         защищено • фрагментировано • доступно только по допуску
         <span class="lang">secure • fragmented • accessible only with clearance</span>
       </p>
+      <a href="#" class="training-link" onclick="showTraining(); return false;">ОБУЧЕНИЕ</a>
     </header>
 
     <main>
@@ -277,10 +310,26 @@
   </div>
 
   <!-- Детали тарифа -->
-  <div id="detail-view">
+  <div id="detail-view" class="detail-page">
     <h2 id="detail-title">Загрузка...</h2>
     <div id="detail-desc"></div>
     <div id="detail-content"></div>
+    <a href="#" class="back-link" onclick="showView('product-list'); return false;">← НАЗАД К ПЛАНАМ</a>
+  </div>
+
+  <!-- Детали обучения -->
+  <div id="training-view" class="detail-page">
+    <h2>ОБУЧЕНИЕ</h2>
+    <div class="highlight">
+      Старт: 1 декабря<br>
+      🎄 Новогодняя скидка 50%: $24.85 / 2 000 ₽
+    </div>
+    <ul class="content-list">
+      <li>Теория и практика по анализу данных</li>
+      <li>Доступ ко всем материалам курса</li>
+      <li>Включён пожизненный доступ к архиву</li>
+    </ul>
+    <a href="https://t.me/shootingddisa" class="back-link" target="_blank">ЗА ПОКУПКОЙ В ТЕЛЕГРАМ @shootingddisa</a>
     <a href="#" class="back-link" onclick="showView('product-list'); return false;">← НАЗАД К ПЛАНАМ</a>
   </div>
 
@@ -334,7 +383,7 @@
     };
 
     function showView(viewId) {
-      document.querySelectorAll('#product-list, #detail-view').forEach(el => {
+      document.querySelectorAll('#product-list, #detail-view, #training-view').forEach(el => {
         el.classList.remove('visible');
         el.style.display = 'none';
       });
@@ -348,16 +397,17 @@
     function showDetailView(id) {
       const item = plans[id];
       if (!item) return;
-
       document.getElementById('detail-title').textContent = item.title;
       document.getElementById('detail-desc').innerHTML = 
         `${item.desc}<br><span class="lang">${item.descEn}</span>`;
-
       const list = document.getElementById('detail-content');
       list.innerHTML = '<ul class="content-list">' + item.content.map(line => `<li>${line}</li>`).join('') + '</ul>';
     }
 
-    // Клик по карточке → детали, но НЕ если кликнули по кнопке
+    function showTraining() {
+      showView('training-view');
+    }
+
     document.querySelectorAll('.product').forEach(card => {
       card.addEventListener('click', (e) => {
         if (e.target.closest('.pay-link')) return;
